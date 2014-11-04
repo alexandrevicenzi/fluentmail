@@ -25,7 +25,7 @@ MAIL_LIST_SEPARETOR = ', '
 
 class FluentMail:
 
-    def __init__(self, host, port=None, security=NON_ENCRYPTED, verb=EHLO):
+    def __init__(self, host, port=None, security=NON_ENCRYPTED, verb=EHLO, credentials=None):
         self._host = host
         self._security = security
 
@@ -51,6 +51,9 @@ class FluentMail:
         self._attachments = []
 
         self._credentials = None
+
+        if credentials:
+            self.credentials(credentials[0], credentials[1])
 
     def __append_addresses(self, old, new):
         t = type(new)
@@ -179,6 +182,8 @@ class FluentMail:
         return self.__build_msg()
 
     def send(self):
+        text = self.__build_msg()
+
         if self._security == TLS:
             server = smtplib.SMTP(self._host, self._port)
             server.starttls()
@@ -194,7 +199,6 @@ class FluentMail:
         elif self._verb == HELO:
             server.helo()
 
-        text = self.__build_msg()
         server.sendmail(self._from_address, self._to, text)
         server.quit()
 
