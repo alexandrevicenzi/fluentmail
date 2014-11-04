@@ -104,27 +104,36 @@ class FluentMail:
             mime.add_header('Content-Disposition', 'attachment', filename=filename)
             msg.attach(mime)
 
-    def __build_msg(self):
-        msg = MIMEMultipart()
+    def __build_msg(self, **kwargs):
+        fromadd = kwargs.get('from_address', self._from_address)
+        to = kwargs.get('to', self._to)
+        cc = kwargs.get('cc', self._cc)
+        bcc = kwargs.get('bcc', self._bcc)
+        subject = kwargs.get('subject', self._subject)
+        reply_to = kwargs.get('reply_to', self._reply_to)
 
-        if not self._from_address:
+        if not fromadd:
             raise ValueError('From cannot be empty.')
 
-        msg['From'] = self._from_address
-
-        if not (self._to or self._cc or self._bcc):
+        if not (to or cc or bcc):
             raise ValueError('You must include at least one address at To, Cc or Bcc.')
 
-        if self._to:
-            msg['To'] = self.__to_str(self._to)
-        if self._cc:
-            msg['Cc'] = self.__to_str(self._cc)
-        if self._bcc:
-            msg['Bcc'] = self.__to_str(self._bcc)
-        if self._reply_to:
-            msg['Reply-To'] = self.__to_str(self._reply_to)
+        msg = MIMEMultipart()
+        msg['From'] = fromadd
 
-        msg['Subject'] = self._subject
+        if to:
+            msg['To'] = self.__to_str(to)
+
+        if cc:
+            msg['Cc'] = self.__to_str(cc)
+
+        if bcc:
+            msg['Bcc'] = self.__to_str(bcc)
+
+        if reply_to:
+            msg['Reply-To'] = self.__to_str(reply_to)
+
+        msg['Subject'] = subject
 
         if self._body['text']:
             subtype = 'html' if self._body['html'] else 'plain'
@@ -134,8 +143,11 @@ class FluentMail:
 
         return msg.as_string()
 
-    def __to_str(self, l):
-        return MAIL_LIST_SEPARATOR.join(l)
+    def __to_str(self, lst):
+        if type(lst) == str:
+            return lst
+
+        return MAIL_LIST_SEPARATOR.join(lst)
 
     def as_html(self, is_html=True):
         self._body['html'] = is_html
@@ -145,9 +157,13 @@ class FluentMail:
         self._attachments.append((filename, charset))
         return self
 
-    def body(self, body, charset='utf-8',):
+    def body(self, body, charset='utf-8', is_html=None):
         self._body['text'] = body
         self._body['charset'] = charset
+
+        if not is_html is None:
+            self._body['html'] = is_html
+
         return self
 
     def credentials(self, user, pwd):
@@ -178,11 +194,11 @@ class FluentMail:
         self._subject = subject
         return self
 
-    def raw_message(self):
-        return self.__build_msg()
+    def raw_message(self, **kwargs):
+        return self.__build_msg(**kwargs)
 
-    def send(self):
-        text = self.__build_msg()
+    def send(self, **kwargs):
+        text = self.__build_msg(**kwargs)
 
         if self._security == TLS:
             server = smtplib.SMTP(self._host, self._port)

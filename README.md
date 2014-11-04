@@ -20,7 +20,7 @@ Works with Python 2.6+ and PyPy, tested by Travis-CI.
 ### Basic
 
 ```python
-from fluentmail import FluentMail
+from fluentmail import *
 
 mail = FluentMail('smtp.gmail.com', 587, TLS)
 
@@ -35,7 +35,7 @@ mail.credentials('you@gmail.com', 'pwd')\
 ### To many receptors
 
 ```python
-from fluentmail import FluentMail
+from fluentmail import *
 
 mail = FluentMail('smtp.gmail.com', 587, TLS)
 
@@ -51,7 +51,7 @@ mail.credentials('you@gmail.com', 'pwd')\
 or
 
 ```python
-from fluentmail import FluentMail
+from fluentmail import *
 
 mail = FluentMail('smtp.gmail.com', 587, TLS)
 
@@ -66,7 +66,7 @@ mail.credentials('you@gmail.com', 'pwd')\
 ### To, Cc, Bcc and Reply-To
 
 ```python
-from fluentmail import FluentMail
+from fluentmail import *
 
 mail = FluentMail('smtp.gmail.com', 587, TLS)
 
@@ -84,7 +84,7 @@ mail.credentials('you@gmail.com', 'pwd')\
 ### HTML Body
 
 ```python
-from fluentmail import FluentMail
+from fluentmail import *
 
 mail = FluentMail('smtp.gmail.com', 587, TLS)
 
@@ -100,7 +100,7 @@ mail.credentials('you@gmail.com', 'pwd')\
 ### With Attachment
 
 ```python
-from fluentmail import FluentMail
+from fluentmail import *
 
 mail = FluentMail('smtp.gmail.com', 587, TLS)
 
@@ -113,6 +113,21 @@ mail.credentials('you@gmail.com', 'pwd')\
     .attach('photo.png')\
     .attach('description.txt', 'utf-8')\ # Charset is optional, and only for Text files.
     .send()
+```
+
+### Being more Pythonic
+
+```
+from fluentmail import *
+
+mail = FluentMail('smtp.gmail.com', security=SSL, credentials=('user', 'pwd'))
+mail.body(u'<h2>Hi, I\'m FluentMail.<h2>', 'utf-8', True)
+mail.send(from_address='you@bar.com',
+          to=['other@bar.com', 'me@bar.com'],
+          cc=[],
+          bcc=[],
+          reply_to=[],
+          subject='FluentMail')
 ```
 
 ### Authentication type
