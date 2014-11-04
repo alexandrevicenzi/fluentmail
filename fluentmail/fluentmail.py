@@ -21,7 +21,7 @@ TLS = 'StartTLS'
 EHLO = 'EHLO'
 HELO = 'HELO'
 
-MAIL_LIST_SEPARETOR = ', '
+MAIL_LIST_SEPARATOR = ', '
 
 class FluentMail:
 
@@ -135,7 +135,7 @@ class FluentMail:
         return msg.as_string()
 
     def __to_str(self, l):
-        return MAIL_LIST_SEPARETOR.join(l)
+        return MAIL_LIST_SEPARATOR.join(l)
 
     def as_html(self, is_html=True):
         self._body['html'] = is_html
