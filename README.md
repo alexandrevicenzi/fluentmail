@@ -7,6 +7,14 @@ Tiny library to send email fluently
 
 `pip install fluentmail`
 
+or
+
+`python setup.py install`
+
+## Compatibility
+
+Works with Python 2.6+ and PyPy, tested by Travis-CI.
+
 ## Usage
 
 ### Basic
@@ -93,3 +101,9 @@ For GMail you may want to read [this](https://www.google.com/settings/security/l
 |Outlook.com|smtp.live.com|StartTLS|587|
 |Office365.com|smtp.office365.com|StartTLS|587|
 |Yahoo Mail|smtp.mail.yahoo.com|SSL|465|
+
+## TODO
+
+- Docs
+- Unit tests
+- Test with others SMTP providers
