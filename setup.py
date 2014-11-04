@@ -15,7 +15,7 @@ with open('README.rst') as f:
 
 setup(
     name='fluentmail',
-    version='0.1.0',
+    version='0.1.1',
     author='Alexandre Vicenzi',
     author_email='vicenzi.alexandre@gmail.com',
     maintainer='Alexandre Vicenzi',
