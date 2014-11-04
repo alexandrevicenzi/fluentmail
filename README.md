@@ -32,6 +32,55 @@ mail.credentials('you@gmail.com', 'pwd')\
     .send()
 ```
 
+### To many receptors
+
+```python
+from fluentmail import FluentMail
+
+mail = FluentMail('smtp.gmail.com', 587, TLS)
+
+mail.credentials('you@gmail.com', 'pwd')\
+    .from_address('you@gmail.com')\
+    .to('other@gmail.com')\
+    .to('another@gmail.com')\
+    .subject('FluentMail')\
+    .body(u'Hi, I\'m FluentMail.')\
+    .send()
+```
+
+or
+
+```python
+from fluentmail import FluentMail
+
+mail = FluentMail('smtp.gmail.com', 587, TLS)
+
+mail.credentials('you@gmail.com', 'pwd')\
+    .from_address('you@gmail.com')\
+    .to(['other@gmail.com', 'another@gmail.com'])\
+    .subject('FluentMail')\
+    .body(u'Hi, I\'m FluentMail.')\
+    .send()
+```
+
+### To, Cc, Bcc and Reply-To
+
+```python
+from fluentmail import FluentMail
+
+mail = FluentMail('smtp.gmail.com', 587, TLS)
+
+mail.credentials('you@gmail.com', 'pwd')\
+    .from_address('you@gmail.com')\
+    .to('other@gmail.com')\
+    .cc('another@gmail.com')\
+    .bcc('moreone@gmail.com')\
+    .reply_to('me@gmail.com')\
+    .subject('FluentMail')\
+    .body(u'Hi, I\'m FluentMail.')\
+    .send()
+```
+
 ### HTML Body
 
 ```python
