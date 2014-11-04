@@ -117,7 +117,7 @@ mail.credentials('you@gmail.com', 'pwd')\
 
 ### Being more Pythonic
 
-```
+```python
 from fluentmail import *
 
 mail = FluentMail('smtp.gmail.com', security=SSL, credentials=('user', 'pwd'))
