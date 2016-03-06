@@ -5,9 +5,8 @@ python:
     - "3.2"
     - "3.3"
     - "3.4"
+    - "3.5"
     - "pypy"
-install:
-    - sudo python setup.py install -f
-script: make test
+script: python -m test.test
 notifications:
     email: false
