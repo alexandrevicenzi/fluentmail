@@ -7,6 +7,6 @@ python:
     - "3.4"
     - "3.5"
     - "pypy"
-script: python -m test.test
+script: python -m tests.test
 notifications:
     email: false
