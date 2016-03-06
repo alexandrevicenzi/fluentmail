@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
 import unittest
 
-from fluentmail import EMailMessage, sanitize_address, sanitize_address_list, join_address_list
-
-PY3 = sys.version_info.major == 3
+from fluentmail import EMailMessage, sanitize_address, sanitize_address_list, join_address_list, PY3
 
 
 class TestEMailMessage(unittest.TestCase):

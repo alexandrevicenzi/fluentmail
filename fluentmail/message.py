@@ -14,7 +14,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import make_msgid, formatdate
 
-from .utils import join_address_list, sanitize_address, text_type, string_types
+from .utils import join_address_list, sanitize_address, text_type, string_type
 
 DEFAULT_MIMETYPE = 'application/octet-stream'
 
@@ -32,21 +32,21 @@ class EMailMessage(object):
         self.is_html = html
         self.encoding = encoding
 
-        if isinstance(to, (text_type, string_types)):
+        if isinstance(to, (text_type, string_type)):
             self.to = [to]
         elif to:
             self.to = list(to)
         else:
             self.to = []
 
-        if isinstance(cc, (text_type, string_types)):
+        if isinstance(cc, (text_type, string_type)):
             self.cc = [cc]
         elif cc:
             self.cc = list(cc)
         else:
             self.cc = []
 
-        if isinstance(bcc, (text_type, string_types)):
+        if isinstance(bcc, (text_type, string_type)):
             self.bcc = [bcc]
         elif bcc:
             self.bcc = list(bcc)
