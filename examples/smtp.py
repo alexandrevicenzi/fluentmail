@@ -49,8 +49,8 @@ def send_without_with():
 
 def send_with_encoding():
     backend = SMTP('smtp.gmail.com', user=GMAIL_USER, password=GMAIL_PWD, security=TLS)
-    msg = EMailMessage('FluentMail pt-BR', u'Acentuação é um negócio do Português', encoding='iso-8859-1',
-                       from_address=FROM, to=TO)
+    msg = EMailMessage('FluentMail com Acentuação', u'Acentuação é um negócio do Português', encoding='iso-8859-1',
+                       from_address='FluentMail com Acentuação <%s>' % FROM, to=TO)
     backend.send(msg)
 
 

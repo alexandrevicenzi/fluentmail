@@ -14,19 +14,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import make_msgid, formatdate
 
-from utils import join_address_list, sanitize_address
-
-try:
-    str_type = basestring
-except NameError:
-    str_type = str
-
-try:
-    unicode_type = unicode
-except NameError:
-    unicode_type = str
-
-string_types = (str_type, unicode_type)
+from .utils import join_address_list, sanitize_address, text_type, string_types
 
 DEFAULT_MIMETYPE = 'application/octet-stream'
 
@@ -44,21 +32,21 @@ class EMailMessage(object):
         self.is_html = html
         self.encoding = encoding
 
-        if isinstance(to, string_types):
+        if isinstance(to, (text_type, string_types)):
             self.to = [to]
         elif to:
             self.to = list(to)
         else:
             self.to = []
 
-        if isinstance(cc, string_types):
+        if isinstance(cc, (text_type, string_types)):
             self.cc = [cc]
         elif cc:
             self.cc = list(cc)
         else:
             self.cc = []
 
-        if isinstance(bcc, string_types):
+        if isinstance(bcc, (text_type, string_types)):
             self.bcc = [bcc]
         elif bcc:
             self.bcc = list(bcc)
@@ -144,10 +132,10 @@ class EMailMessage(object):
                 mimetype = DEFAULT_MIMETYPE
 
         if encoding:
-            with codecs.open(path, 'r', encoding) as f:
+            with codecs.open(path, 'rb', encoding) as f:
                 content = f.read()
         else:
-            with open(path) as f:
+            with open(path, 'rb') as f:
                 content = f.read()
 
         self.attach(filename, content, mimetype)

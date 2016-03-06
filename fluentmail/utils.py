@@ -2,7 +2,18 @@
 
 __all__ = ['sanitize_address', 'sanitize_address_list', 'join_address_list']
 
+import sys
+
 from email.utils import parseaddr, formataddr
+
+PY3 = sys.version_info.major == 3
+
+if PY3:
+    text_type = str
+    string_types = (str,)
+else:
+    text_type = unicode
+    string_types = (str, unicode)
 
 
 def sanitize_address(address):
