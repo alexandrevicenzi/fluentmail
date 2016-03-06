@@ -1,4 +1,4 @@
-## FluentMail [![Build Status](https://travis-ci.org/alexandrevicenzi/fluentmail.svg?branch=master)](https://travis-ci.org/alexandrevicenzi/fluentmail)
+## FluentMail [![Build Status](https://travis-ci.org/alexandrevicenzi/fluentmail.svg)](https://travis-ci.org/alexandrevicenzi/fluentmail) [![PyPI](https://img.shields.io/pypi/v/fluentmail.svg)](https://pypi.python.org/pypi/fluentmail)
 
 Tiny library to send email
 
@@ -16,7 +16,36 @@ Works with Python 2.6+, 3.3+ and PyPy.
 
 ## Usage
 
-TODO
+### Basic
+
+```python
+with SMTP('smtp.gmail.com', user=GMAIL_USER, password=GMAIL_PWD, security=SSL) as backend:
+    msg = EMailMessage('FluentMail SSL', 'The tiny library to send emails',
+                       from_address=FROM, to=TO)
+    msg.send(backend)
+```
+
+or
+
+```python
+backend = SMTP('smtp.gmail.com', user=GMAIL_USER, password=GMAIL_PWD, security=TLS)
+msg = EMailMessage('FluentMail Without With Block', 'The tiny library to send emails',
+                   from_address=FROM, to=TO)
+backend.send(msg)
+```
+
+### Multiple messages
+
+```python
+with SMTP('smtp.gmail.com', user=GMAIL_USER, password=GMAIL_PWD, security=TLS) as backend:
+    msg1 = EMailMessage('FluentMail', 'The tiny library to send emails',
+                        from_address=FROM, to=TO)
+    msg2 = EMailMessage('FluentMail', 'The tiny library to send emails',
+                        from_address=FROM, to=TO)
+    backend.send_multiple([msg1, msg2])
+```
+
+Take a look in `examples` to see more examples.
 
 ## Common smtp servers
 
