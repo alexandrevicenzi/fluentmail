@@ -12,7 +12,7 @@ or
 
 ## Compatibility
 
-Works with Python 2.6+, 3.2+ and PyPy.
+Works with Python 2.6+, 3.3+ and PyPy.
 
 ## Usage
 
