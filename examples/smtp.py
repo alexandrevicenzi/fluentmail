@@ -12,37 +12,37 @@ TO = 'receiver@gmail.com'
 
 def send_ssl():
     with SMTP('smtp.gmail.com', user=GMAIL_USER, password=GMAIL_PWD, security=SSL) as backend:
-        msg = EMailMessage('FluentMail SSL', 'The tiny library to send emails',
+        msg = EMailMessage('FluentMail SSL', 'Python SMTP client and Email for Humans™',
                            from_address=FROM, to=TO)
         msg.send(backend)
 
 
 def send_tls():
     with SMTP('smtp.gmail.com', user=GMAIL_USER, password=GMAIL_PWD, security=TLS) as backend:
-        msg = EMailMessage('FluentMail TLS', 'The tiny library to send emails',
+        msg = EMailMessage('FluentMail TLS', 'Python SMTP client and Email for Humans™',
                            from_address=FROM, to=TO)
         msg.send(backend)
 
 
 def send_html():
     with SMTP('smtp.gmail.com', user=GMAIL_USER, password=GMAIL_PWD, security=TLS) as backend:
-        msg = EMailMessage('FluentMail HTML', '<b>The tiny library to send emails<b>', html=True,
+        msg = EMailMessage('FluentMail HTML', '<b>Python SMTP client and Email for Humans&#8482;<b>', html=True,
                            from_address=FROM, to=TO)
         msg.send(backend)
 
 
 def send_multiple():
     with SMTP('smtp.gmail.com', user=GMAIL_USER, password=GMAIL_PWD, security=TLS) as backend:
-        msg1 = EMailMessage('FluentMail Multiple 1', 'The tiny library to send emails',
+        msg1 = EMailMessage('FluentMail Multiple 1', 'Python SMTP client and Email for Humans™',
                             from_address=FROM, to=TO)
-        msg2 = EMailMessage('FluentMail Multiple 2', 'The tiny library to send emails',
+        msg2 = EMailMessage('FluentMail Multiple 2', 'Python SMTP client and Email for Humans™',
                             from_address=FROM, to=TO)
         backend.send_multiple([msg1, msg2])
 
 
 def send_without_with():
     backend = SMTP('smtp.gmail.com', user=GMAIL_USER, password=GMAIL_PWD, security=TLS)
-    msg = EMailMessage('FluentMail Without With Block', 'The tiny library to send emails',
+    msg = EMailMessage('FluentMail Without With Block', 'Python SMTP client and Email for Humans™',
                        from_address=FROM, to=TO)
     backend.send(msg)
 

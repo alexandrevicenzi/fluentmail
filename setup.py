@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name='fluentmail',
-    version='1.0.0',
+    version='1.0.0-dev',
     author='Alexandre Vicenzi',
     author_email='vicenzi.alexandre@gmail.com',
     maintainer='Alexandre Vicenzi',
