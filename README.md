@@ -1,62 +1,90 @@
 ## FluentMail [![Build Status](https://travis-ci.org/alexandrevicenzi/fluentmail.svg)](https://travis-ci.org/alexandrevicenzi/fluentmail) [![PyPI](https://img.shields.io/pypi/v/fluentmail.svg)](https://pypi.python.org/pypi/fluentmail)
 
-Tiny library to send email
+Python SMTP client and Email for Humans&#8482;
+
+## Simple
+
+FluentMail tries to keep it simple as possible.
+
+### SMTP client
+
+With FluentMail
+
+```python
+from fluentmail import SMTP, TLS
+
+client = SMTP('smtp.gmail.com', user='user', password='password', security=TLS)
+client.send(message)
+```
+
+Pure Python
+
+```python
+import smtplib
+
+client = smtplib.SMTP('smtp.gmail.com', 587)
+client.starttls()
+client.login('user', 'password')
+client.sendmail('you@yourdomain.com', 'me@mydomain.com', '<RAW EMAIL MESSAGE>')
+```
+
+### Email message
+
+With FluentMail
+
+```python
+message = EMailMessage('FluentMail', 'Python SMTP client and Email for Humans', from_address='you@yourdomain.com', to='me@mydomain.com')
+message.attach_file('./photos/our-great-time-together.png')
+```
+
+Pure Python
+
+```python
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.utils import make_msgid, formatdate
+
+message = MIMEMultipart()
+message['Subject'] = 'FluentMail'
+message['From'] = 'you@yourdomain.com'
+message['To'] = 'me@mydomain.com'
+message['Date'] = formatdate()
+message['Message-ID'] = make_msgid()
+message.attach(MIMEText('Python SMTP client and Email for Humans', 'plain', 'utf-8'))
+
+with open('./photos/our-great-time-together.png', 'rb') as f:
+    message.attach(MIMEImage(f.read(), 'png'))
+```
+
+## Supported backends
+
+- SMTP
+- Mailgun (without attachment)
+- Dummy (TODO)
+- FileBased (TODO)
+- MemoryBased (TODO)
 
 ## Install
 
 `pip install fluentmail`
 
-or
-
-`python setup.py install`
-
 ## Compatibility
 
 Works with Python 2.6+, 3.3+ and PyPy.
 
-## Usage
+## Documentation
 
-### Basic
+TODO
 
-```python
-with SMTP('smtp.gmail.com', user=GMAIL_USER, password=GMAIL_PWD, security=SSL) as backend:
-    msg = EMailMessage('FluentMail SSL', 'The tiny library to send emails',
-                       from_address=FROM, to=TO)
-    msg.send(backend)
-```
+## Future work
 
-or
-
-```python
-backend = SMTP('smtp.gmail.com', user=GMAIL_USER, password=GMAIL_PWD, security=TLS)
-msg = EMailMessage('FluentMail Without With Block', 'The tiny library to send emails',
-                   from_address=FROM, to=TO)
-backend.send(msg)
-```
-
-### Multiple messages
-
-```python
-with SMTP('smtp.gmail.com', user=GMAIL_USER, password=GMAIL_PWD, security=TLS) as backend:
-    msg1 = EMailMessage('FluentMail', 'The tiny library to send emails',
-                        from_address=FROM, to=TO)
-    msg2 = EMailMessage('FluentMail', 'The tiny library to send emails',
-                        from_address=FROM, to=TO)
-    backend.send_multiple([msg1, msg2])
-```
-
-Take a look in `examples` to see more examples.
-
-## Common smtp servers
-
-| Name  | Server | Authentication | Port |
-|:----|:--------:|:--------------:|:----:|
-|Gmail|smtp.gmail.com|SSL|465|
-|Gmail|smtp.gmail.com|StartTLS|587|
-|Hotmail|smtp.live.com|SSL|465|
-|Mail.com|smtp.mail.com|SSL|465|
-|Outlook.com|smtp.live.com|StartTLS|587|
-|Office365.com|smtp.office365.com|StartTLS|587|
-|Yahoo Mail|smtp.mail.yahoo.com|SSL|465|
-
-For GMail you may want to read [this](https://www.google.com/settings/security/lesssecureapps) security info.
+- Dummy backend
+- FileBased backend
+- MemoryBased backend
+- Support template engines (Django, Jinja)
+- Support Mailgun message attachment
+- Support custom message headers
+- Set default backend
+- Thread-safety
+- What more?
