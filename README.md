@@ -33,7 +33,10 @@ client.sendmail('you@yourdomain.com', 'me@mydomain.com', '<RAW EMAIL MESSAGE>')
 With FluentMail
 
 ```python
-message = EMailMessage('FluentMail', 'Python SMTP client and Email for Humans', from_address='you@yourdomain.com', to='me@mydomain.com')
+from fluentmail import EMailMessage
+
+message = EMailMessage('FluentMail', 'Python SMTP client and Email for Humans',
+                       from_address='you@yourdomain.com', to='me@mydomain.com')
 message.attach_file('./photos/our-great-time-together.png')
 ```
 
@@ -61,9 +64,6 @@ with open('./photos/our-great-time-together.png', 'rb') as f:
 
 - SMTP
 - Mailgun (without attachment)
-- Dummy (TODO)
-- FileBased (TODO)
-- MemoryBased (TODO)
 
 ## Install
 
