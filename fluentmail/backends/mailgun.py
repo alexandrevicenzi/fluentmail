@@ -3,6 +3,7 @@
 __all__ = ['Mailgun']
 
 from . import base
+from fluentmail.utils import sanitize_address_list, sanitize_address
 
 
 class Mailgun(base.BaseBackend):
@@ -12,16 +13,17 @@ class Mailgun(base.BaseBackend):
 
     def _build_data(self, message):
         email_data = {
-            'to': ', '.join(message.to),
-            'cc': ', '.join(message.cc),
-            'bcc': ', '.join(message.bcc),
-            'to': ', '.join(message.to),
-            'from': message.from_address,
+            'to': sanitize_address_list(message.to),
+            'cc': sanitize_address_list(message.cc),
+            'bcc': sanitize_address_list(message.bcc),
+            'from': sanitize_address(message.from_address),
             'subject': message.subject,
         }
 
         key = 'html' if message.is_html else 'text'
         email_data[key] = message.body
+
+        return email_data
 
     def send_multiple(self, messages):
         if self.account and self.api_key:
