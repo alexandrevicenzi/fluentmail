@@ -5,65 +5,7 @@ Python SMTP client and Email for Humans&#8482;
 ## Simple
 
 FluentMail tries to keep it simple as possible.
-
-### SMTP client
-
-With FluentMail
-
-```python
-from fluentmail import SMTP, TLS
-
-client = SMTP('smtp.gmail.com', user='user', password='password', security=TLS)
-client.send(message)
-```
-
-Pure Python
-
-```python
-import smtplib
-
-client = smtplib.SMTP('smtp.gmail.com', 587)
-client.starttls()
-client.login('user', 'password')
-client.sendmail('you@yourdomain.com', 'me@mydomain.com', '<RAW EMAIL MESSAGE>')
-```
-
-### Email message
-
-With FluentMail
-
-```python
-from fluentmail import EMailMessage
-
-message = EMailMessage('FluentMail', 'Python SMTP client and Email for Humans',
-                       from_address='you@yourdomain.com', to='me@mydomain.com')
-message.attach_file('./photos/our-great-time-together.png')
-```
-
-Pure Python
-
-```python
-from email.mime.image import MIMEImage
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.utils import make_msgid, formatdate
-
-message = MIMEMultipart()
-message['Subject'] = 'FluentMail'
-message['From'] = 'you@yourdomain.com'
-message['To'] = 'me@mydomain.com'
-message['Date'] = formatdate()
-message['Message-ID'] = make_msgid()
-message.attach(MIMEText('Python SMTP client and Email for Humans', 'plain', 'utf-8'))
-
-with open('./photos/our-great-time-together.png', 'rb') as f:
-    message.attach(MIMEImage(f.read(), 'png'))
-```
-
-## Supported backends
-
-- SMTP
-- Mailgun (without attachment)
+Check [how simple is it](https://github.com/alexandrevicenzi/fluentmail/wiki/How-simple-is-it%3F).
 
 ## Install
 
@@ -77,14 +19,22 @@ Works with Python 2.6+, 3.3+ and PyPy.
 
 TODO
 
+## Features
+
+- SMTP
+- Mailgun
+- Plain or HTML body
+- Alternative body
+- Attachments
+
 ## Future work
 
 - Dummy backend
 - FileBased backend
 - MemoryBased backend
 - Support template engines (Django, Jinja)
-- Support Mailgun message attachment
 - Support custom message headers
 - Set default backend
 - Thread-safety
+- Inline attachment
 - What more?
