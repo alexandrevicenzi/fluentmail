@@ -17,7 +17,10 @@ class BaseBackend(object):
         self.close()
 
     def send(self, message):
-        self.send_multiple([message])
+        if isinstance(message, (list, tuple)):
+            self.send_multiple(message)
+        else:
+            self.send_multiple([message])
 
     def send_multiple(self, messages):
         pass

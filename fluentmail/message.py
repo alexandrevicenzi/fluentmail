@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
-__all__ = ['EMailMessage']
+__all__ = ['Message']
 
-import codecs
 import os
 import mimetypes
 
-from email import encoders
+from email import charset, encoders
 from email.mime.audio import MIMEAudio
 from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
@@ -18,18 +17,21 @@ from .utils import join_address_list, sanitize_address, text_type, string_type
 
 DEFAULT_MIMETYPE = 'application/octet-stream'
 
+utf8_charset = charset.Charset('utf-8')
+utf8_charset.body_encoding = None
 
-class EMailMessage(object):
 
-    def __init__(self, subject='', body='', html=False, encoding=None,
+class Message(object):
+
+    def __init__(self, subject='', body='', html='', encoding=None,
                  from_address=None, to=None, cc=None, bcc=None,
                  reply_to=None, attachments=None):
         self.subject = subject
         self.body = body
+        self.html = html
         self.from_address = from_address
         self.reply_to = reply_to
         self.attachments = attachments or []
-        self.is_html = html
         self.encoding = encoding
 
         if isinstance(to, (text_type, string_type)):
@@ -53,7 +55,7 @@ class EMailMessage(object):
         else:
             self.bcc = []
 
-    def message(self):
+    def mime_message(self):
         msg = MIMEMultipart()
         msg['Subject'] = self.subject
         msg['From'] = sanitize_address(self.from_address)
@@ -72,37 +74,45 @@ class EMailMessage(object):
         if self.reply_to:
             msg['Reply-To'] = sanitize_address(self.reply_to)
 
-        if self.body:
-            content_subtype = 'html' if self.is_html else 'plain'
-            encoding = self.encoding or 'utf-8'
-            msg.attach(MIMEText(self.body, content_subtype, encoding))
+        encoding = self.encoding or 'utf-8'
+
+        if self.body and self.html:
+            alternative = MIMEMultipart('alternative')
+            alternative.attach(MIMEText(self.body, 'plain', encoding))
+            alternative.attach(MIMEText(self.html, 'html', encoding))
+            msg.attach(alternative)
+        elif self.body:
+            msg.attach(MIMEText(self.body, 'plain', encoding))
+        elif self.html:
+            msg.attach(MIMEText(self.html, 'html', encoding))
 
         for attachment in self.attachments:
             msg.attach(attachment)
 
         return msg
 
+    def raw_message(self):
+        return self.mime_message().as_string()
+
     def recipients(self):
         return self.to + self.cc + self.bcc
-
-    def raw(self):
-        return self.message().as_string()
 
     def send(self, backend):
         backend.send(self)
 
-    def attach(self, filename, content, mimetype, encoding='utf-8'):
+    def attach(self, filename, content, mimetype):
         maintype, subtype = mimetype.split('/', 1)
 
         if maintype == 'text':
-            mime = MIMEText(content, subtype, encoding)
+            mime = MIMEText(content, subtype, None)
+            mime.set_payload(content, utf8_charset)
         elif maintype == 'image':
             mime = MIMEImage(content, subtype)
         elif maintype == 'audio':
             mime = MIMEAudio(content, subtype)
         else:
             mime = MIMEBase(maintype, subtype)
-            mime.set_payload(content, encoding)
+            mime.set_payload(content)
             encoders.encode_base64(mime)
 
         self.attach_mime(filename, mime)
@@ -121,8 +131,7 @@ class EMailMessage(object):
 
         self.attachments.append(mime)
 
-    def attach_file(self, path, mimetype=None, encoding=None):
-        content = None
+    def attach_file(self, path, mimetype=None):
         filename = os.path.basename(path)
 
         if not mimetype:
@@ -131,11 +140,6 @@ class EMailMessage(object):
             if not mimetype:
                 mimetype = DEFAULT_MIMETYPE
 
-        if encoding:
-            with codecs.open(path, 'rb', encoding) as f:
-                content = f.read()
-        else:
-            with open(path, 'rb') as f:
-                content = f.read()
-
-        self.attach(filename, content, mimetype)
+        with open(path, 'rb') as f:
+            content = f.read()
+            self.attach(filename, content, mimetype)

@@ -3,95 +3,109 @@
 
 import unittest
 
-from fluentmail import EMailMessage, sanitize_address, sanitize_address_list, join_address_list, PY3
+from fluentmail import Message
+from fluentmail.utils import sanitize_address, sanitize_address_list, join_address_list, PY3
 
 
-class TestEMailMessage(unittest.TestCase):
+class TestMessage(unittest.TestCase):
 
     def test_body_plain(self):
-        msg = EMailMessage('FluentMail', 'The tiny library to send emails',
-                           from_address='sender@fluentmail.com', to='receiver@fluentmail.com')
-        mime = msg.message()
+        msg = Message('FluentMail', 'Python SMTP client and Email for Humans™')
+        mime = msg.mime_message()
         body = mime.get_payload()[0]
         self.assertEqual(body.get_content_type(), 'text/plain')
         self.assertEqual(body.get_charset(), 'utf-8')
-        self.assertEqual(body.get_payload(), 'VGhlIHRpbnkgbGlicmFyeSB0byBzZW5kIGVtYWlscw==\n')
+        self.assertEqual(body.get_payload(), 'UHl0aG9uIFNNVFAgY2xpZW50IGFuZCBFbWFpbCBmb3IgSHVtYW5z4oSi\n')
 
     def test_body_plain_russian(self):
-        msg = EMailMessage('FluentMail', u'К сожалению, мы должны сообщить',
-                           from_address='sender@fluentmail.com', to='receiver@fluentmail.com')
-        mime = msg.message()
+        msg = Message('FluentMail', u'К сожалению, мы должны сообщить')
+        mime = msg.mime_message()
         body = mime.get_payload()[0]
         self.assertEqual(body.get_content_type(), 'text/plain')
         self.assertEqual(body.get_charset(), 'utf-8')
         self.assertEqual(body.get_payload(), '0Jog0YHQvtC20LDQu9C10L3QuNGOLCDQvNGLINC00L7Qu9C20L3RiyDRgdC+0L7QsdGJ0LjRgtGM\n')
 
     def test_body_plain_chinese(self):
-        msg = EMailMessage('FluentMail', u'我的测试文档',
-                           from_address='sender@fluentmail.com', to='receiver@fluentmail.com')
-        mime = msg.message()
+        msg = Message('FluentMail', u'我的测试文档')
+        mime = msg.mime_message()
         body = mime.get_payload()[0]
         self.assertEqual(body.get_content_type(), 'text/plain')
         self.assertEqual(body.get_charset(), 'utf-8')
         self.assertEqual(body.get_payload(), '5oiR55qE5rWL6K+V5paH5qGj\n')
 
     def test_body_html(self):
-        msg = EMailMessage('FluentMail', '<b>The tiny library to send emails<b>', html=True,
-                           from_address='sender@fluentmail.com', to='receiver@fluentmail.com')
-        mime = msg.message()
+        msg = Message('FluentMail', html='<b>Python SMTP client and Email for Humans&#8482;<b>')
+        mime = msg.mime_message()
         body = mime.get_payload()[0]
         self.assertEqual(body.get_content_type(), 'text/html')
         self.assertEqual(body.get_charset(), 'utf-8')
-        self.assertEqual(body.get_payload(), 'PGI+VGhlIHRpbnkgbGlicmFyeSB0byBzZW5kIGVtYWlsczxiPg==\n')
+        self.assertEqual(body.get_payload(), 'PGI+UHl0aG9uIFNNVFAgY2xpZW50IGFuZCBFbWFpbCBmb3IgSHVtYW5zJiM4NDgyOzxiPg==\n')
 
     def test_body_encoding(self):
-        msg = EMailMessage('FluentMail', u'Acentuação é um negócio do Português', encoding='iso-8859-1',
-                           from_address='sender@fluentmail.com', to='receiver@fluentmail.com')
-        mime = msg.message()
+        msg = Message('FluentMail', u'Acentuação é um negócio do Português', encoding='iso-8859-1')
+        mime = msg.mime_message()
         body = mime.get_payload()[0]
         self.assertEqual(body.get_content_type(), 'text/plain')
         self.assertEqual(body.get_charset(), 'iso-8859-1')
         self.assertEqual(body.get_payload(), 'Acentua=E7=E3o =E9 um neg=F3cio do Portugu=EAs')
 
+    def test_alternative_body(self):
+        msg = Message('FluentMail', 'Python SMTP client and Email for Humans™', '<b>Python SMTP client and Email for Humans&#8482;<b>')
+        mime = msg.mime_message()
+        alternative = mime.get_payload()[0]
+        self.assertEqual(alternative.get_content_type(), 'multipart/alternative')
+        self.assertEqual(alternative.get_charset(), None)
+        plain = alternative.get_payload()[0]
+        html = alternative.get_payload()[1]
+        self.assertEqual(plain.get_content_type(), 'text/plain')
+        self.assertEqual(html.get_content_type(), 'text/html')
+
     def test_attachment(self):
-        msg = EMailMessage()
+        msg = Message()
         msg.attach('myfile.txt', 'my content', 'text/plain')
         attachment = msg.attachments[0]
         self.assertEqual(attachment.get_content_type(), 'text/plain')
         self.assertEqual(attachment.get_charset(), 'utf-8')
-        self.assertEqual(attachment.get_payload(), 'bXkgY29udGVudA==\n')
-        self.assertEqual(attachment.get_filename(), 'myfile.txt')
-        self.assertEqual(attachment['Content-Disposition'], 'attachment; filename="myfile.txt"')
-
-    def test_attachment_encoding(self):
-        msg = EMailMessage()
-        msg.attach('myfile.txt', u'Acentuação é um negócio do Português', 'text/plain', 'iso-8859-1')
-        attachment = msg.attachments[0]
-        self.assertEqual(attachment.get_content_type(), 'text/plain')
-        self.assertEqual(attachment.get_charset(), 'iso-8859-1')
-        self.assertEqual(attachment.get_payload(), u'Acentua=E7=E3o =E9 um neg=F3cio do Portugu=EAs')
+        self.assertEqual(attachment.get_payload(), 'my content')
         self.assertEqual(attachment.get_filename(), 'myfile.txt')
         self.assertEqual(attachment['Content-Disposition'], 'attachment; filename="myfile.txt"')
 
     def test_attachment_file_encoded(self):
-        msg = EMailMessage()
-        msg.attach_file('./tests/encoded-file.txt', 'text/plain', 'iso-8859-1')
+        msg = Message()
+        # this file is encoded with iso-8859-1
+        msg.attach_file('./tests/encoded-file.txt', 'text/plain')
         attachment = msg.attachments[0]
         self.assertEqual(attachment.get_content_type(), 'text/plain')
         self.assertEqual(attachment.get_charset(), 'utf-8')
-        self.assertEqual(attachment.get_payload(), 'QWNlbnR1YcOnw6NvIMOpIHVtIG5lZ8OzY2lvIGRvIFBvcnR1Z3XDqnM=\n')
+        self.assertEqual(attachment.get_payload(), u'Acentuação é um negócio do Português'.encode('iso-8859-1'))
         self.assertEqual(attachment.get_filename(), 'encoded-file.txt')
         self.assertEqual(attachment['Content-Disposition'], 'attachment; filename="encoded-file.txt"')
 
     def test_attachment_file_pdf(self):
-        msg = EMailMessage()
+        msg = Message()
         msg.attach_file('./tests/example.pdf')
         attachment = msg.attachments[0]
         self.assertEqual(attachment.get_content_type(), 'application/pdf')
-        self.assertEqual(attachment.get_charset(), 'utf-8')
+        self.assertEqual(attachment.get_charset(), None)
         #self.assertEqual(attachment.get_payload(), u'')
         self.assertEqual(attachment.get_filename(), 'example.pdf')
         self.assertEqual(attachment['Content-Disposition'], 'attachment; filename="example.pdf"')
+
+    def test_recipients(self):
+        msg = Message(to='to@fluentmail.com',
+                      cc=['cc1@fluentmail.com', 'cc2@fluentmail.com'],
+                      bcc=['bcc1@fluentmail.com', 'bcc2@fluentmail.com'])
+        recipients = msg.recipients()
+        self.assertTrue('to@fluentmail.com' in recipients)
+        self.assertTrue('cc1@fluentmail.com' in recipients)
+        self.assertTrue('cc2@fluentmail.com' in recipients)
+        self.assertTrue('bcc1@fluentmail.com' in recipients)
+        self.assertTrue('bcc2@fluentmail.com' in recipients)
+
+    def test_raw_message(self):
+        msg = Message('FluentMail', 'Python SMTP client and Email for Humans™')
+        raw = msg.raw_message()
+        # TODO
 
 
 class TestUtils(unittest.TestCase):

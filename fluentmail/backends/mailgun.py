@@ -5,6 +5,9 @@ __all__ = ['Mailgun']
 from . import base
 from fluentmail.utils import sanitize_address_list, sanitize_address
 
+from base64 import b64decode
+from quopri import decodestring as decode_quopri
+
 
 class Mailgun(base.BaseBackend):
     def __init__(self, account, api_key):
@@ -20,10 +23,30 @@ class Mailgun(base.BaseBackend):
             'subject': message.subject,
         }
 
-        key = 'html' if message.is_html else 'text'
-        email_data[key] = message.body
+        email_data['text'] = message.body
+        email_data['html'] = message.html
 
         return email_data
+
+    def _build_attachments(self, message):
+        attachments = []
+
+        for attachment in message.attachments:
+            file_name = attachment.get_filename()
+            encoding = attachment.get('Content-Transfer-Encoding', None)
+
+            if encoding == 'base64':
+                decode = not attachment.get_content_maintype() in ['audio', 'image', 'text']
+                content = b64decode(attachment.get_payload(decode=decode))
+            elif encoding == 'quoted-printable':
+                content = decode_quopri(attachment.get_payload())
+            else:
+                content = attachment.get_payload()
+
+            content_type = attachment.get_content_type()
+            attachments.append(('attachment', (file_name, content, content_type)))
+
+        return attachments
 
     def send_multiple(self, messages):
         if self.account and self.api_key:
@@ -34,4 +57,5 @@ class Mailgun(base.BaseBackend):
                     'https://api.mailgun.net/v3/%s/messages' % self.account,
                     auth=('api', self.api_key),
                     data=self._build_data(message),
+                    files=self._build_attachments(message),
                 ).raise_for_status()
