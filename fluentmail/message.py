@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-__all__ = ['Message']
+__all__ = ['Message', 'DEFAULT_MIMETYPE']
 
 import os
 import mimetypes
@@ -140,6 +140,20 @@ class Message(object):
             if not mimetype:
                 mimetype = DEFAULT_MIMETYPE
 
-        with open(path, 'rb') as f:
-            content = f.read()
-            self.attach(filename, content, mimetype)
+        maintype, subtype = mimetype.split('/', 1)
+        readmode = 'r' if maintype == 'text' else 'rb'
+
+        with open(path, readmode) as f:
+            try:
+                content = f.read()
+            except UnicodeDecodeError:
+                # tried to read an encoded text file without binary mode.
+                # this will raise an error on Python 3.
+                content = None
+
+        if content is None:
+            with open(path, 'rb') as f:
+                content = f.read()
+                mimetype = DEFAULT_MIMETYPE
+
+        self.attach(filename, content, mimetype)

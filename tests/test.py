@@ -3,7 +3,7 @@
 
 import unittest
 
-from fluentmail import Message
+from fluentmail import Message, DEFAULT_MIMETYPE
 from fluentmail.utils import sanitize_address, sanitize_address_list, join_address_list, PY3
 
 
@@ -75,9 +75,16 @@ class TestMessage(unittest.TestCase):
         # this file is encoded with iso-8859-1
         msg.attach_file('./tests/encoded-file.txt', 'text/plain')
         attachment = msg.attachments[0]
-        self.assertEqual(attachment.get_content_type(), 'text/plain')
-        self.assertEqual(attachment.get_charset(), 'utf-8')
-        self.assertEqual(attachment.get_payload(), u'Acentuação é um negócio do Português'.encode('iso-8859-1'))
+
+        # Python 3 fails to open encoded file without binary mode.
+        if PY3:
+            self.assertEqual(attachment.get_content_type(), DEFAULT_MIMETYPE)
+            self.assertEqual(attachment.get_payload(), 'QWNlbnR1YefjbyDpIHVtIG5lZ/NjaW8gZG8gUG9ydHVndepz\n')
+        else:
+            self.assertEqual(attachment.get_content_type(), 'text/plain')
+            self.assertEqual(attachment.get_charset(), 'utf-8')
+            self.assertEqual(attachment.get_payload(), u'Acentuação é um negócio do Português'.encode('iso-8859-1'))
+
         self.assertEqual(attachment.get_filename(), 'encoded-file.txt')
         self.assertEqual(attachment['Content-Disposition'], 'attachment; filename="encoded-file.txt"')
 
