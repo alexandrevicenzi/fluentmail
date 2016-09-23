@@ -10,7 +10,7 @@ setup(
     author_email='vicenzi.alexandre@gmail.com',
     maintainer='Alexandre Vicenzi',
     maintainer_email='vicenzi.alexandre@gmail.com',
-    packages=['fluentmail'],
+    packages=['fluentmail', 'fluentmail.backends'],
     url='https://github.com/alexandrevicenzi/fluentmail',
     bugtrack_url='https://github.com/alexandrevicenzi/fluentmail/issues',
     license='MIT',
