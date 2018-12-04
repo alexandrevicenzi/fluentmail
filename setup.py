@@ -8,7 +8,7 @@ with open('README.rst', 'r') as f:
 
 setup(
     name='fluentmail',
-    version='1.0.0-dev',
+    version='1.0.0',
     author='Alexandre Vicenzi',
     author_email='pypi@alxd.me',
     maintainer='Alexandre Vicenzi',
