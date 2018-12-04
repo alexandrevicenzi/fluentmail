@@ -4,8 +4,8 @@ __all__ = ['NON_ENCRYPTED', 'SSL', 'TLS', 'HELO', 'HELO', 'SMTP']
 
 import smtplib
 
-from . import base
 from fluentmail.utils import sanitize_address, join_address_list
+from . import base
 
 NON_ENCRYPTED = 'AUTH'
 SSL = 'SSL'

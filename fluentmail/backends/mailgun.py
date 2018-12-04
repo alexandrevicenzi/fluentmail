@@ -2,14 +2,15 @@
 
 __all__ = ['Mailgun']
 
-from . import base
-from fluentmail.utils import sanitize_address_list, sanitize_address
-
 from base64 import b64decode
 from quopri import decodestring as decode_quopri
 
+from fluentmail.utils import sanitize_address_list, sanitize_address
+from . import base
+
 
 class Mailgun(base.BaseBackend):
+
     def __init__(self, account, api_key):
         self.account = account
         self.api_key = api_key
