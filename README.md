@@ -5,7 +5,6 @@ Python SMTP client and Email for Humans&#8482;
 ## Simple
 
 FluentMail tries to keep it simple as possible.
-Check [how simple is it](https://github.com/alexandrevicenzi/fluentmail/wiki/How-simple-is-it%3F).
 
 ## Install
 
@@ -13,11 +12,11 @@ Check [how simple is it](https://github.com/alexandrevicenzi/fluentmail/wiki/How
 
 ## Compatibility
 
-Works with Python 2.6+, 3.3+ and PyPy.
+Works with Python 2.6+, Python 3.3+, PyPy and PyPy 3.
 
 ## Documentation
 
-TODO
+You can find some info on the project wiki.
 
 ## Features
 
