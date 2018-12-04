@@ -28,6 +28,7 @@ You can find some info on the project wiki.
 
 ## Future work
 
+- More test coverage
 - Dummy backend
 - FileBased backend
 - MemoryBased backend

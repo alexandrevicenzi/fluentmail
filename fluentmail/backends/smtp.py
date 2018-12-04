@@ -72,7 +72,7 @@ class SMTP(base.BaseBackend):
         for message in messages:
             from_address = sanitize_address(message.from_address)
             recipients = join_address_list(message.recipients())
-            self.connection.sendmail(from_address, recipients, message.raw())
+            self.connection.sendmail(from_address, recipients, message.raw_message())
 
         if new_connection:
             self.close()
